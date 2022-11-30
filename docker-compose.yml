@@ -8,7 +8,14 @@ services:
     environment:
       SERVICE: orders.js
     env_file: orders.env
+    depends_on: [ orders-db ]
   orders-db:
     image: postgres
     restart: always
     env_file: orders.env
+    volumes:
+      - orders_vol:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+volumes:
+  orders_vol:
