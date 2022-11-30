@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  orders:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    environment:
+      SERVICE: orders.js
+    env_file: orders.env
+  orders-db:
+    image: postgres
+    restart: always
+    env_file: orders.env
