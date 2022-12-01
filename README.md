@@ -6,5 +6,8 @@ A simple node orders microservice sample, it is not full example(no Auth, no val
 
 - [x] create orders service.
 - [x] Setup docker config.
+- [x] Create orders table.
+- [x] add get and create order endpoints.
+- [ ] setup event Bus.
 - [] CREATE INVENTORY service.
 - [] SET COMMUNICATION BETWEEN THEM.
