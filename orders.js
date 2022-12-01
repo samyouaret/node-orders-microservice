@@ -26,7 +26,6 @@ async function connect() {
 const PORT = process.env.APP_PORT
 
 app.get("/orders", async (req, res) => {
-    res.setHeader("Content-Type", 'application/json')
     const result = await client.query("SELECT * from public.orders");
     res.json(result.rows)
 });
@@ -39,7 +38,6 @@ app.post("/orders", async (req, res) => {
     }
     // publish product OrderCreated 
     // {order_id, products[{id, qty}]}
-    res.setHeader("Content-Type", 'application/json')
     res.json({
         ...order,
         products: req.body.products
