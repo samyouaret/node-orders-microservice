@@ -8,6 +8,7 @@ A simple node orders microservice sample, it is not full example(no Auth, no val
 - [x] Setup docker config.
 - [x] Create orders table.
 - [x] add get and create order endpoints.
-- [ ] setup event Bus.
+- [x] setup event Bus.
+- [] add volume to kafka. 
 - [] CREATE INVENTORY service.
 - [] SET COMMUNICATION BETWEEN THEM.
