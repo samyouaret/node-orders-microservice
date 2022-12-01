@@ -1,6 +1,7 @@
 const express = require("express");
 const { Client } = require('pg')
 const { Kafka } = require('kafkajs')
+const { Worker } = require('worker_threads');
 
 const kafka = new Kafka({
     clientId: 'orders-app',
@@ -38,21 +39,6 @@ app.get("/orders", async (req, res) => {
     res.json(result.rows)
 });
 
-const consumer = kafka.consumer({ groupId: 'test-group' });
-app.get("/events", async (req, res) => {
-    let events = [];
-    await consumer.run({
-        eachMessage: async ({ topic, partition, message }) => {
-            events.push({
-                partition,
-                offset: message.offset,
-                value: message.value.toString(),
-            });
-        },
-    })
-    res.json(events)
-});
-
 app.post("/orders", async (req, res) => {
     const result = await client.query("INSERT INTO public.orders(status) values($1) RETURNING *", [status.PENDING]);
     const order = result.rows[0];
@@ -60,7 +46,6 @@ app.post("/orders", async (req, res) => {
         await client.query("INSERT INTO public.orders_products(order_id,product_id,qty,provided_qty) values($1,$2,$3,0)", [order.id, product.product_id, product.qty]);
     }
     // publish product OrderCreated 
-    // {order_id, products[{id, qty}]}
     let payload = Buffer.from(JSON.stringify({
         type: "ORDER_CREATED",
         payload: {
@@ -89,22 +74,23 @@ app.use((err, req, res) => {
     res.json(err.message);
 });
 
+function runConsumer() {
+    return new Promise((resolve, reject) => {
+        const worker = new Worker('./order-consumer.js');
+        worker.on('message', resolve);
+        worker.on('error', reject);
+        worker.on('exit', (code) => {
+            if (code !== 0)
+                reject(new Error(`Worker stopped with exit code ${code}`));
+        })
+    })
+}
+
 async function init() {
     await connect_db()
     await producer.connect()
-    // Consuming
-    await consumer.connect()
-    await consumer.subscribe({ topic: 'orders', fromBeginning: true })
     app.listen(PORT, () => console.log(`App on port: ${PORT}`))
-    await consumer.run({
-        eachMessage: async ({ topic, partition, message }) => {
-            console.log({
-                partition,
-                offset: message.offset,
-                value: message.value.toString(),
-            })
-        },
-    })
+    await runConsumer();
 }
 
 init();
