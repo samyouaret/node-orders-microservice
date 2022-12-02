@@ -9,6 +9,6 @@ A simple node orders microservice sample, it is not full example(no Auth, no val
 - [x] Create orders table.
 - [x] add get and create order endpoints.
 - [x] setup event Bus.
-- [] add volume to kafka. 
-- [] CREATE INVENTORY service.
-- [] SET COMMUNICATION BETWEEN THEM.
+- [x] add volume to kafka. 
+- [x] CREATE PRODUCT service.
+- [x] SET COMMUNICATION BETWEEN THEM.

@@ -18,6 +18,24 @@ services:
       - orders_vol:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+  products:
+    build:
+      context: .
+    ports:
+      - "3001:3001"
+    environment:
+      SERVICE: products.js
+    env_file: products.env
+    depends_on: [ products-db, broker ]
+    restart: always
+  products-db:
+    image: postgres
+    restart: always
+    env_file: products.env
+    volumes:
+      - products_vol:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
   ## setup kafka
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
@@ -48,5 +66,6 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
 volumes:
   orders_vol:
+  products_vol:
   kafka_vol:
   zookeeper_vol:
