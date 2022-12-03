@@ -45,7 +45,7 @@ async function init() {
                     console.log(result);
                 }
                 await client.query("UPDATE public.orders SET status='READY' where id=$1", [event.payload.orderId]);
-                console.log("Update qty...");
+                console.log("Product Quantity Fulfilled ...");
             }
         },
     });

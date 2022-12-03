@@ -20,3 +20,11 @@ create table if not exists orders_products(
 	foreign key (product_id) references products(id),
     provided_qty integer
 );
+
+create table if not exists outbox(
+	id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+	createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	event_type varchar(100) NOT NULL,
+	event_payload json  NOT NULL,
+	dispatched boolean DEFAULT false
+);
